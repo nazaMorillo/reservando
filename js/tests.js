@@ -1,3 +1,4 @@
+
 let expect = chai.expect; 
 
 //Clase Restaurante
@@ -8,7 +9,7 @@ describe('Instanciar restaurantes, reservas y puntuación', function(){
     })
 
 	it('Al reservar el horario "12:00", este se elimina del arreglo',function(){
-		let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["12:00"], "../img/asado.jpg", [7,8]);		
+		let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["11:00", "12:00", "13:00"], "../img/asado.jpg", [7,8]);		
 		restaurante.reservarHorario("12:00");
         expect(restaurante.reservarHorario("12:00")).to.equal(undefined);
     })
@@ -42,20 +43,22 @@ describe('Filtrar listado de Restaurantes', function(){
 
     it('Obtener sin repetir todas las ciudades donde hay un restaurante ["Berlín", "Londres", "Nueva York", "París", "Roma"] ',function(){    	
         let listado = new Listado(listadoDeRestaurantes);
-        /*expect(listado.obtC()).to.be.an('array');*/
-        expect(listado.obtC()).to.be.an('array').to.eql(["Berlín", "Londres", "Nueva York", "París", "Roma"]);
+        let listaCiudades=["Berlín", "Londres", "Nueva York", "París", "Roma"];
+        expect(listado.obtenerUbicaciones()).to.be.an('array').to.eql(listaCiudades);
     })
 
     it('Obtener sin repetir todos los rubros de restaurantes',function(){    	
         let listado = new Listado(listadoDeRestaurantes);
-        /*expect(listado.obtR()).to.be.an('array');*/
-        expect(listado.obtR()).to.be.an('array').to.eql(["Asiática", "Desayuno", "Ensalada", "Hamburguesa", "Pasta", "Pizza"]);
+        let listaRubros=["Asiática", "Desayuno", "Ensalada", "Hamburguesa", "Pasta", "Pizza"];
+        expect(listado.obtenerRubros()).to.be.an('array').to.eql(listaRubros);
     })
 
     it('Obtener sin repetir todas los horarios',function(){    	
         let listado = new Listado(listadoDeRestaurantes);
-        /*expect(listado.obtH()).to.be.an('array');*/
-        expect(listado.obtH()).to.be.an('array').to.eql(["11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "19:00", "19:30", "20:30", "21:00", "21:30", "22:30"]);
+        let listaHorarios=["11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
+         "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+          "18:00", "19:00", "19:30", "20:30", "21:00", "21:30", "22:30"]; 
+        expect(listado.obtenerHorarios()).to.be.an('array').to.eql(listaHorarios);
     })
 
 })
@@ -67,7 +70,7 @@ describe('Filtros de restaurantes', function(){
 		let restaurante2 = new Restaurant(2, "Rest2", "Desayuno", "Per", ["13:00", "20:30"], "img/pasta2.jpg", [7, 4, 7]);
 		let restaurante3 = new Restaurant(3, "Rest3", "Pizza", "Ita", ["13:00", "20:30"], "img/pasta2.jpg", [7, 4, 7]);
         let listadoPrueba = [restaurante1, restaurante2, restaurante3];
-        let restoElegido = [listadoPrueba[1]]
+        let restoElegido = [listadoPrueba[1]];
         let listado = new Listado(listadoPrueba);
         let app = new Aplicacion(listado);
         let rubro="Desayuno";
@@ -81,7 +84,7 @@ describe('Filtros de restaurantes', function(){
 		let restaurante2 = new Restaurant(2, "Rest2", "Desayuno", "Per", ["13:00", "20:30"], "img/pasta2.jpg", [7, 4, 7]);
 		let restaurante3 = new Restaurant(3, "Rest3", "Pizza", "Ita", ["13:00", "20:30"], "img/pasta2.jpg", [7, 4, 7]);
         let listadoPrueba = [restaurante1, restaurante2, restaurante3];
-        let restoElegido = [listadoPrueba[0]]
+        let restoElegido = [listadoPrueba[0]];
         let listado = new Listado(listadoPrueba);
         let app = new Aplicacion(listado);
         let ciudad="Arg";
@@ -94,9 +97,9 @@ describe('Filtros de restaurantes', function(){
         let restaurante1 = new Restaurant(1, "Rest1", "Pasta", "Arg", ["12:00", "17:30"], "img/pasta1.jpg", [8, 4, 7]);
 		let restaurante2 = new Restaurant(2, "Rest2", "Desayuno", "Per", ["13:00", "20:30"], "img/pasta2.jpg", [7, 4, 7]);
 		let restaurante3 = new Restaurant(3, "Rest3", "Pizza", "Ita", ["13:00", "20:30"], "img/pasta2.jpg", [7, 4, 7]);
-        let listadoPrueba = [restaurante1, restaurante2, restaurante3];
-        let restoElegido = [listadoPrueba[1],listadoPrueba[2]]
+        let listadoPrueba = [restaurante1, restaurante2, restaurante3];        
         let listado = new Listado(listadoPrueba);
+        let restoElegido = [listadoPrueba[1],listadoPrueba[2]];
         let app = new Aplicacion(listado);
         let horario="13:00";
         let restFiltrado=app.listado.obtenerRestaurantes(null,null,horario);
