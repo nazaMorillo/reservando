@@ -107,4 +107,144 @@ describe('Filtros de restaurantes', function(){
         expect(restFiltrado).to.be.eql(restoElegido);
     })
 
-})
+});
+
+// Reserva
+describe('Funcionalidades de reserva', function(){
+	it('Crear reserva "Reserva1"',function(){
+		let date= new Date(2018, 7, 24, 11, 00);
+		let reserva1 = new Reserva (date, 8, 350, "DES1");
+		let control  = {
+			horario : date,
+    		cantidadPersonas : 8,
+    		precioPersona : 350,
+    		codigoDescuento : "DES1"
+		};
+        expect(reserva1.horario).to.be.equal(control.horario);
+        expect(reserva1.cantidadPersonas).to.be.equal(control.cantidadPersonas);
+        expect(reserva1.precioPersona).to.be.equal(control.precioPersona);
+        expect(reserva1.codigoDescuento).to.be.equal(control.codigoDescuento);
+    })
+    it('Calcular precio base "2 personas a $150 c/u"',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva1 = new Reserva (date, 2, 150, "DES200");
+        let control  = {
+            horario : date,
+            cantidadPersonas : 2,
+            precioPersona : 150,
+            codigoDescuento : "DES200"
+        };
+        let precioBase=control.cantidadPersonas*control.precioPersona;        
+        expect(reserva1.calcularPrecioBase()).to.be.equal(precioBase);        
+    })
+});
+
+// Adicionales
+describe('Calcular Adicionales', function(){
+    it('Calcular Adicionales por horario pico "13:00 hs"',function(){
+        let date= new Date(2018, 7, 31, 13, 00);
+        let reserva1 = new Reserva (date, 2, 150, "DES200");
+        let control  = {
+            horario : date,
+            cantidadPersonas : 2,
+            precioPersona : 150,
+        };
+        let precioBase=control.cantidadPersonas*control.precioPersona;
+        let adicionalPorHorario=precioBase*0.05;               
+        expect(reserva1.adicionalPorHorario()).to.be.equal(adicionalPorHorario);                
+    });    
+    it('Calcular Adicionales por fin de semana',function(){
+        let date= new Date(2018, 7, 31, 13, 00);
+        let reserva1 = new Reserva (date, 2, 150, "DES200");
+        let control  = {
+            horario : date,
+            cantidadPersonas : 2,
+            precioPersona : 150,
+        };
+        let precioBase=control.cantidadPersonas*control.precioPersona;        
+        let adicionalPorFinSemana=precioBase*0.10;       
+        expect(reserva1.adicionalPorFinSemana()).to.be.equal(adicionalPorFinSemana);        
+    });
+    it('Suma total de Adicionales',function(){
+        let date= new Date(2018, 7, 31, 13, 00);
+        let reserva1 = new Reserva (date, 2, 150, "DES200");
+        let control  = {
+            horario : date,
+            cantidadPersonas : 2,
+            precioPersona : 150,
+        };
+        let precioBase=control.cantidadPersonas*control.precioPersona;
+        let adicionalPorHorario=precioBase*0.05;        
+        let adicionalPorFinSemana=precioBase*0.10;
+        let sumaAdicionales=adicionalPorHorario+adicionalPorFinSemana;
+        expect(reserva1.calcularAdicionales()).to.be.equal(sumaAdicionales);        
+    });
+});
+
+// Descuentos por código
+describe('Calcular Descuentos', function(){
+    it('Calcular descuento por código "DES15"',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva = new Reserva (date, 2, 150, "DES15"); //45
+        
+        let control= [2,150,0.15];
+        let descuento15=(control[0]*control[1])*control[2]; //45              
+        expect(reserva.calcularDtoPorCodigo()).to.be.equal(descuento15);        
+    });
+    it('Calcular descuento por código "DES200"',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva = new Reserva (date, 2, 150, "DES200");//200
+        
+        let descuento200=200; //200
+        expect(reserva.calcularDtoPorCodigo()).to.be.equal(descuento200);       
+    });
+    it('Calcular descuento por código "DES1"',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva = new Reserva (date, 2, 150, "DES1");//150
+
+        let control= [2,150,0.15];
+        let descuento1=control[1];//150
+        expect(reserva.calcularDtoPorCodigo()).to.be.equal(descuento1);        
+    });
+    it('Calcular descuento por código Incorrecto',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva1 = new Reserva (date, 2, 150, "DES15355");             
+        expect(reserva1.calcularDtoPorCodigo()).to.be.equal(0);                
+    });
+    it('Calcular descuento por cantidad de personas',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva = new Reserva (date, 3, 100, "DES15");
+        let reserva1 = new Reserva (date, 4, 100, "DES15");
+        let reserva2 = new Reserva (date, 6, 100, "DES15");
+        let reserva3 = new Reserva (date, 7, 100, "DES15");
+        let reserva4 = new Reserva (date, 8, 100, "DES15");
+        let reserva5 = new Reserva (date, 9, 100, "DES15");
+
+        let dto1=(reserva1.cantidadPersonas*reserva1.precioPersona)*0.05;
+        let dto2=(reserva2.cantidadPersonas*reserva2.precioPersona)*0.05; 
+        let dto3=(reserva3.cantidadPersonas*reserva3.precioPersona)*0.10; 
+        let dto4=(reserva4.cantidadPersonas*reserva4.precioPersona)*0.10;
+        let dto5=(reserva5.cantidadPersonas*reserva5.precioPersona)*0.15;
+        expect(reserva.calcularDtoPorCant()).to.be.equal(0);            
+        expect(reserva1.calcularDtoPorCant()).to.be.equal(dto1);
+        expect(reserva2.calcularDtoPorCant()).to.be.equal(dto2);
+        expect(reserva3.calcularDtoPorCant()).to.be.equal(dto3);
+        expect(reserva4.calcularDtoPorCant()).to.be.equal(dto4);
+        expect(reserva5.calcularDtoPorCant()).to.be.equal(dto5);      
+    })
+    it('Calcular descuento total',function(){
+        let date= new Date(2018, 7, 24, 11, 00);
+        let reserva1 = new Reserva (date,4, 100, "DES200");            
+        expect(reserva1.calcularDescuento()).to.be.equal(220);             
+    });
+});
+// Precio total de reserva
+describe('Precio de reserva', function(){
+    it('Precio total correcto de "Reserva1" y "Reserva2"',function(){
+        let reserva1 = new Reserva (new Date(2018, 7, 24, 11, 00), 8, 350, "DES1");
+        let reserva2 = new Reserva (new Date(2018, 7, 27, 14, 00), 2, 150, "DES200");
+
+        expect(reserva1.precioTotalReserva()).to.be.equal(2450);
+        expect(reserva2.precioTotalReserva()).to.be.equal(100);
+    })
+});
