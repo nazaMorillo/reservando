@@ -211,6 +211,7 @@ describe('Calcular Descuentos', function(){
         let reserva1 = new Reserva (date, 2, 150, "DES15355");             
         expect(reserva1.calcularDtoPorCodigo()).to.be.equal(0);                
     });
+    // Descuentos por cantidad de personas
     it('Calcular descuento por cantidad de personas',function(){
         let date= new Date(2018, 7, 27, 14, 100);
         let reserva = new Reserva (date, 3, 100, "DES15");
