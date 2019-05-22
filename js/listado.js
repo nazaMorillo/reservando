@@ -23,7 +23,6 @@ Listado.prototype.buscarRestaurante = function(id) {
     let restaurante=this.restaurantes.find(function(restaurante){
         return restaurante.id===id;
     });
-    console.log(restaurante);
     if (restaurante) {
         return restaurante;
     }

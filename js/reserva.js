@@ -75,6 +75,7 @@ Reserva.prototype.calcularDtoPorCodigo = function() {
 		default:
 			console.log("Codigo incorrecto, vuelva a intentar");			
 			/*
+			// alerta que se puede usar luego que se implemente la clase reserva
 			swal({
 		        title: "Codigo incorrecto",
                 text: "No se realizará descuento",

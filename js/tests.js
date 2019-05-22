@@ -1,35 +1,64 @@
 
-let expect = chai.expect; 
+let expect = chai.expect;
 
 //Clase Restaurante
 describe('Instanciar restaurantes, reservas y puntuación', function(){
-	it('Se agrega correctamente el restaurante "Paisano" ',function(){
+	it('Restaurante se agrega correctamente',function(){
         let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["12:00"], "../img/asado.jpg", [7,8]);
         expect(restaurante.nombre).to.equal("Paisano");
     })
 
-	it('Al reservar el horario "12:00", este se elimina del arreglo',function(){
+})
+
+// Reserva restaurante
+describe('Reservación de Restaurantes', function(){
+	it('Al reservar un horario del restaurante, este se elimina del arreglo',function(){
 		let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["11:00", "12:00", "13:00"], "../img/asado.jpg", [7,8]);		
 		restaurante.reservarHorario("12:00");
         expect(restaurante.reservarHorario("12:00")).to.equal(undefined);
     })
 
+    it('Al reservar un horario que no está, el arreglo se mantiene igual',function(){
+        let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["11:00", "12:00", "13:00"], "../img/asado.jpg", [7,8]);       
+        restaurante.reservarHorario("14:00");
+        expect(restaurante.horarios).to.eql(["11:00", "12:00", "13:00"]);
+    })
+
+    it('Al reservar un horario sin parametros, el arreglo se mantiene igual',function(){
+        let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["11:00", "12:00", "13:00"], "../img/asado.jpg", [7,8]);       
+        restaurante.reservarHorario();
+        expect(restaurante.horarios).to.eql(["11:00", "12:00", "13:00"]);
+    })
+
+});
+
+// Obtener puntuación
+describe('Obtener puntuación de Restaurante', function(){
+
+    it('Obtener puntuación "7.5" de restarurantes con calificaciones de "[7,8]" ',function(){
+        let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["12:00"], "../img/asado.jpg", [7,8]);
+        expect(restaurante.obtenerPuntuacion()).to.equal(7.5);
+    });
+
+    it('Obtener puntuación "0" de restarurantes sin calificaciones',function(){
+        let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["12:00"], "../img/asado.jpg", []);
+        expect(restaurante.obtenerPuntuacion()).to.equal(0);
+    });
+
+});
+
+// Calificación de restaurante
+describe('Calificación de Restaurante', function(){
     it('Calificar Restaurante con número "7" ',function(){
     	let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["12:00"], "../img/asado.jpg", [8]);
         restaurante.calificar(7);
         expect(restaurante.calificaciones).to.eql([8,7]);
-    })
+    });
+});
 
-    it('Obtener puntuación "7.5" de restarurantes con calificaciones de "[7,8]" ',function(){
-    	let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["12:00"], "../img/asado.jpg", [7,8]);
-        expect(restaurante.obtenerPuntuacion()).to.equal(7.5);
-    })
-
-})
-
-//Clase Listado
-describe('Filtrar listado de Restaurantes', function(){
-	it('Se busca restaurante por id "1" ',function(){
+// Clase Listado
+describe('Busqueda de  Restaurantes por Id', function(){
+	it('Se busca restaurante por id existente "1"',function(){
         let listado = new Listado(listadoDeRestaurantes);
         let restoBuscado=listado.buscarRestaurante(1);
         expect(restoBuscado.id).to.equal(1);
@@ -40,20 +69,24 @@ describe('Filtrar listado de Restaurantes', function(){
         let restoBuscado=listado.buscarRestaurante(26);
         expect(restoBuscado.id).to.equal(undefined);
     })
+})
 
-    it('Obtener sin repetir todas las ciudades donde hay un restaurante ["Berlín", "Londres", "Nueva York", "París", "Roma"] ',function(){    	
+// Clase Listado
+describe('Obtención de listas sin repetir', function(){
+
+    it('Ciudades donde hay un restaurante',function(){    	
         let listado = new Listado(listadoDeRestaurantes);
         let listaCiudades=["Berlín", "Londres", "Nueva York", "París", "Roma"];
         expect(listado.obtenerUbicaciones()).to.be.an('array').to.eql(listaCiudades);
     })
 
-    it('Obtener sin repetir todos los rubros de restaurantes',function(){    	
+    it('Rubros de los restaurantes',function(){    	
         let listado = new Listado(listadoDeRestaurantes);
         let listaRubros=["Asiática", "Desayuno", "Ensalada", "Hamburguesa", "Pasta", "Pizza"];
         expect(listado.obtenerRubros()).to.be.an('array').to.eql(listaRubros);
     })
 
-    it('Obtener sin repetir todas los horarios',function(){    	
+    it('Horarios de los restaurantes',function(){    	
         let listado = new Listado(listadoDeRestaurantes);
         let listaHorarios=["11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
          "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
@@ -63,8 +96,8 @@ describe('Filtrar listado de Restaurantes', function(){
 
 })
 
-//Filtros de restaurantes
-describe('Filtros de restaurantes', function(){
+// Clase Restaurant
+describe('Obtención de restaurantes por rubros', function(){
 	it('Filtra correctamente restaurantes por rubro "Desayuno" ',function(){
 		let restaurante1 = new Restaurant(1, "Rest1", "Pasta", "Arg", ["12:00", "17:30"], "img/pasta1.jpg", [8, 4, 7]);
 		let restaurante2 = new Restaurant(2, "Rest2", "Desayuno", "Per", ["13:00", "20:30"], "img/pasta2.jpg", [7, 4, 7]);
@@ -75,7 +108,6 @@ describe('Filtros de restaurantes', function(){
         let app = new Aplicacion(listado);
         let rubro="Desayuno";
         let restFiltrado=app.listado.obtenerRestaurantes(rubro,null,null);
-        // console.log(restFiltrado);
         expect(restFiltrado).to.be.eql(restoElegido);
     })
 
@@ -89,7 +121,6 @@ describe('Filtros de restaurantes', function(){
         let app = new Aplicacion(listado);
         let ciudad="Arg";
         let restFiltrado=app.listado.obtenerRestaurantes(null,ciudad,null);
-        // console.log(restFiltrado);
         expect(restFiltrado).to.be.eql(restoElegido);
     })
 
@@ -103,13 +134,12 @@ describe('Filtros de restaurantes', function(){
         let app = new Aplicacion(listado);
         let horario="13:00";
         let restFiltrado=app.listado.obtenerRestaurantes(null,null,horario);
-        // console.log(restFiltrado);
         expect(restFiltrado).to.be.eql(restoElegido);
     })
 
 });
 
-// Reserva
+// Clase Reserva
 describe('Funcionalidades de reserva', function(){
 	it('Crear reserva "Reserva1"',function(){
 		let date= new Date(2018, 7, 24, 11, 00);
@@ -124,7 +154,8 @@ describe('Funcionalidades de reserva', function(){
         expect(reserva1.cantidadPersonas).to.be.equal(control.cantidadPersonas);
         expect(reserva1.precioPersona).to.be.equal(control.precioPersona);
         expect(reserva1.codigoDescuento).to.be.equal(control.codigoDescuento);
-    })
+    });
+
     it('Calcular precio base "2 personas a $150 c/u"',function(){
         let date= new Date(2018, 7, 27, 14, 100);
         let reserva1 = new Reserva (date, 2, 150, "DES200");
@@ -139,8 +170,8 @@ describe('Funcionalidades de reserva', function(){
     })
 });
 
-// Adicionales
-describe('Calcular Adicionales', function(){
+// Adicionales Reserva
+describe('Calculo de Adicionales', function(){
     it('Calcular Adicionales por horario pico "13:00 hs"',function(){
         let date= new Date(2018, 7, 31, 13, 00);
         let reserva1 = new Reserva (date, 2, 150, "DES200");
@@ -153,7 +184,7 @@ describe('Calcular Adicionales', function(){
         let adicionalPorHorario=precioBase*0.05;               
         expect(reserva1.adicionalPorHorario()).to.be.equal(adicionalPorHorario);                
     });    
-    it('Calcular Adicionales por fin de semana',function(){
+    it('Calculo de Adicionales por fin de semana',function(){
         let date= new Date(2018, 7, 31, 13, 00);
         let reserva1 = new Reserva (date, 2, 150, "DES200");
         let control  = {
@@ -165,7 +196,11 @@ describe('Calcular Adicionales', function(){
         let adicionalPorFinSemana=precioBase*0.10;       
         expect(reserva1.adicionalPorFinSemana()).to.be.equal(adicionalPorFinSemana);        
     });
-    it('Suma total de Adicionales',function(){
+});
+
+// Adicional total de reserva
+describe('Total de Adicional de reserva', function(){
+    it('Calcular total de Adicionales',function(){
         let date= new Date(2018, 7, 31, 13, 00);
         let reserva1 = new Reserva (date, 2, 150, "DES200");
         let control  = {
@@ -182,7 +217,7 @@ describe('Calcular Adicionales', function(){
 });
 
 // Descuentos por código
-describe('Calcular Descuentos', function(){
+describe('Calcular descuentos por código', function(){
     it('Calcular descuento por código "DES15"',function(){
         let date= new Date(2018, 7, 27, 14, 100);
         let reserva = new Reserva (date, 2, 150, "DES15"); //45
@@ -211,28 +246,56 @@ describe('Calcular Descuentos', function(){
         let reserva1 = new Reserva (date, 2, 150, "DES15355");             
         expect(reserva1.calcularDtoPorCodigo()).to.be.equal(0);                
     });
-    // Descuentos por cantidad de personas
-    it('Calcular descuento por cantidad de personas',function(){
-        let date= new Date(2018, 7, 27, 14, 100);
-        let reserva = new Reserva (date, 3, 100, "DES15");
-        let reserva1 = new Reserva (date, 4, 100, "DES15");
-        let reserva2 = new Reserva (date, 6, 100, "DES15");
-        let reserva3 = new Reserva (date, 7, 100, "DES15");
-        let reserva4 = new Reserva (date, 8, 100, "DES15");
-        let reserva5 = new Reserva (date, 9, 100, "DES15");
+});
 
+// Descuentos por cantidad
+describe('Calcular descuento por cantidad de personas', function(){
+    // Descuentos por cantidad de personas
+    it('Calcular descuento por 3 de personas',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva = new Reserva (date, 3, 100, "DES15");            
+        expect(reserva.calcularDtoPorCant()).to.be.equal(0);             
+    });
+
+    it('Calcular descuento por 4 de personas',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva1 = new Reserva (date, 4, 100, "DES15");
         let dto1=(reserva1.cantidadPersonas*reserva1.precioPersona)*0.05;
-        let dto2=(reserva2.cantidadPersonas*reserva2.precioPersona)*0.05; 
-        let dto3=(reserva3.cantidadPersonas*reserva3.precioPersona)*0.10; 
+        expect(reserva1.calcularDtoPorCant()).to.be.equal(dto1);             
+    });
+
+    it('Calcular descuento por 6 de personas',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva2 = new Reserva (date, 6, 100, "DES15");
+        let dto2=(reserva2.cantidadPersonas*reserva2.precioPersona)*0.05;
+        expect(reserva2.calcularDtoPorCant()).to.be.equal(dto2);             
+    });
+
+    it('Calcular descuento por 7 de personas',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva3 = new Reserva (date, 7, 100, "DES15");
+        let dto3=(reserva3.cantidadPersonas*reserva3.precioPersona)*0.10;
+        expect(reserva3.calcularDtoPorCant()).to.be.equal(dto3);             
+    });
+
+    it('Calcular descuento por 8 de personas',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva4 = new Reserva (date, 8, 100, "DES15");
         let dto4=(reserva4.cantidadPersonas*reserva4.precioPersona)*0.10;
+        expect(reserva4.calcularDtoPorCant()).to.be.equal(dto4);             
+    });
+
+    it('Calcular descuento por 9 de personas',function(){
+        let date= new Date(2018, 7, 27, 14, 100);
+        let reserva5 = new Reserva (date, 9, 100, "DES15");
         let dto5=(reserva5.cantidadPersonas*reserva5.precioPersona)*0.15;
-        expect(reserva.calcularDtoPorCant()).to.be.equal(0);            
-        expect(reserva1.calcularDtoPorCant()).to.be.equal(dto1);
-        expect(reserva2.calcularDtoPorCant()).to.be.equal(dto2);
-        expect(reserva3.calcularDtoPorCant()).to.be.equal(dto3);
-        expect(reserva4.calcularDtoPorCant()).to.be.equal(dto4);
-        expect(reserva5.calcularDtoPorCant()).to.be.equal(dto5);      
-    })
+        expect(reserva5.calcularDtoPorCant()).to.be.equal(dto5);             
+    });
+});
+
+// Descuento total de reserva
+describe('Descuento de reserva', function(){ 
+
     it('Calcular descuento total',function(){
         let date= new Date(2018, 7, 24, 11, 00);
         let reserva1 = new Reserva (date,4, 100, "DES200");            
@@ -240,12 +303,16 @@ describe('Calcular Descuentos', function(){
     });
 });
 // Precio total de reserva
-describe('Precio de reserva', function(){
-    it('Precio total correcto de "Reserva1" y "Reserva2"',function(){
+describe('Precio final de reserva', function(){
+    it('Calcular precio total correcto de "Reserva1"',function(){
         let reserva1 = new Reserva (new Date(2018, 7, 24, 11, 00), 8, 350, "DES1");
-        let reserva2 = new Reserva (new Date(2018, 7, 27, 14, 00), 2, 150, "DES200");
 
         expect(reserva1.precioTotalReserva()).to.be.equal(2450);
+    });
+
+    it('Calcular precio total correcto de "Reserva2"',function(){        
+        let reserva2 = new Reserva (new Date(2018, 7, 27, 14, 00), 2, 150, "DES200");
+
         expect(reserva2.precioTotalReserva()).to.be.equal(100);
-    })
+    });
 });
