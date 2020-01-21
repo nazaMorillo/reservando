@@ -2,7 +2,7 @@
 let expect = chai.expect;
 
 //Clase Restaurante
-describe('Instanciar restaurantes, reservas y puntuación', function(){
+describe('Crear restaurante', function(){
 	it('Restaurante se agrega correctamente',function(){
         let restaurante = new Restaurant(25, "Paisano", "Parrilla", "Argentina", ["12:00"], "../img/asado.jpg", [7,8]);
         expect(restaurante.nombre).to.equal("Paisano");
